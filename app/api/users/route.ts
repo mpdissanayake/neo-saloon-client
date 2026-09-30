@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
 
     if (requestedUser == null) {
         return NextResponse.json (
-            
+
         {
             message: "you need to be logged in to access this resource",
         },
@@ -25,7 +25,23 @@ export async function GET(request: NextRequest) {
         
     
 
-    const users =await prisma.user.findMany()
+    const users =await prisma.user.findMany({
+
+        select:{
+            id  :true,
+            email : true,
+            phone : true,
+            firstName :true,
+            lastName : true,
+            password :false,
+            role :true,
+            status :true,
+            createdAt : true,
+            lastLogin : true,
+            privileges :true
+        }
+
+    })
         return NextResponse.json(
             { 
                 message :"Users fetched successfully",
