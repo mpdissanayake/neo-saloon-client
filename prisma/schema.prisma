@@ -24,6 +24,6 @@ model User {
   status String @default("ACTIVE")//Active, Banned,  suspended
   createdAt DateTime @default(now())
   lastLogin DateTime?
-  privileges String[] @default([]) //["CREATE_PRODUCT", "UPDATE_PRODUCT", "DELETE_PRODUCT", "VIEW_PRODUCT"]
+  privileges String[] @default([]) //["users:add","users:edit","users:read"]
 }// gender ,emailVerified, phoneVerified, 
 
