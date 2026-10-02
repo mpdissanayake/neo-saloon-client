@@ -21,3 +21,15 @@ export async function getUser(request : NextRequest){
 
 }
 }
+export async function isPrivileged(request : NextRequest, privilege  : string){
+    const user = await getUser(request);
+    if(user == null){
+        return false;
+    }
+    if(user.privileges.includes(privilege)){
+        return true;
+    }else{
+        return false;
+    }
+
+}
