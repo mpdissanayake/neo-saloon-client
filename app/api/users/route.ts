@@ -6,20 +6,9 @@ export async function GET(request: NextRequest) {
 
     const  requestedUser = await getUser(request)
 
-    if (requestedUser == null) {
-        return NextResponse.json (
+    
 
-        {
-            message: "you need to be logged in to access this resource",
-        },
-
-        {
-            status: 401
-        }
-    )
-    }
-
-    console.log(requestedUser)
+  
 
     if(requestedUser.privileges.includes("users:read")){
         
