@@ -125,7 +125,34 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
         {
             message : "User created successfully",
-        },          
+        }, 
+        {
+            status : 201
+        }         
     )
 
 }    
+
+export async function PUT(request: NextRequest) {
+    const id = request.nextUrl.searchParams.get("id");
+
+    const requestUser = await getUser(request);
+
+    if(requestUser == null){
+        return NextResponse.json(
+            {
+                message : "You are not Logged in ",
+            },
+            { 
+                status : 401 
+            }
+        );
+    }
+
+    if(requestUser.id !== id){
+        //try to update another user
+    
+    }else{
+        //user is trying to update someone else's account check if they have the privilege
+    }    
+}
