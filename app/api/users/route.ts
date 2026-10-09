@@ -26,8 +26,18 @@ const pageNumber = parseInt(pageNumberInString);
 const pageSize = parseInt(pageSizeInString);
 
 const userCount = await prisma.user.count();
+const totalPages =Math.ceil(userCount / pageSize);
 
-
+if(pageNumber > totalPages){
+    return NextResponse.json(
+        {
+            message : "Page number exceeds total pages",
+        },
+        {
+            status : 400
+        }
+    );
+}
 
 
 console.log(
@@ -37,9 +47,9 @@ console.log(
      userCount : userCount
     }
 )
-
-    const users =await prisma.user.findMany({
-
+    const users = await prisma.user.findMany({
+        skip: (pageNumber - 1) * pageSize,
+        take: pageSize,
         select:{
             id  :true,
             email : true,
@@ -52,10 +62,10 @@ console.log(
             createdAt : true,
             lastLogin : true,
             privileges :true
-        }
+        }          
+    });
 
-    })
-        return NextResponse.json(
+    return NextResponse.json(
             { 
                 message :"Users fetched successfully",
                 users : users,
