@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { getUser, isPrivileged } from "@/utils/authentication";
 import bcrypt from "bcryptjs";
+import { count } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) { 
@@ -18,6 +19,24 @@ export async function GET(request: NextRequest) {
         );
     }
     
+const pageNumberInString = request.nextUrl.searchParams.get("pageNumber") || "1";
+const pageSizeInString = request.nextUrl.searchParams.get("pageSize") || "10";
+
+const pageNumber = parseInt(pageNumberInString);
+const pageSize = parseInt(pageSizeInString);
+
+const userCount = await prisma.user.count();
+
+
+
+
+console.log(
+    {
+     pageNumber : pageNumber,
+     pageSize : pageSize, 
+     userCount : userCount
+    }
+)
 
     const users =await prisma.user.findMany({
 
