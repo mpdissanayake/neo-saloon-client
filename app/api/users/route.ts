@@ -69,7 +69,13 @@ console.log(
             { 
                 message :"Users fetched successfully",
                 users : users,
-                status: 200 
+                status: 200,
+                pagination : {
+                    pageNumber : pageNumber,
+                    pageSize : pageSize,
+                    totalPages : totalPages,
+                    totalUsers : userCount
+                }     
             }
     );
 
@@ -178,10 +184,103 @@ export async function PUT(request: NextRequest) {
         );
     }
 
-    if(requestUser.id !== id){
+    const body = await request.json();
+
+    if(requestUser.id == id){
         //try to update another user
-    
+        
+        const user =await prisma.user.findUnique({
+            where : {
+                id : id 
+            }
+        });
+
+        if (user == null) {
+            return NextResponse.json(
+                {
+                    message : "User not found",
+                },
+                { 
+                    status : 404 
+                }
+            );
+        }
+
+        await prisma.user.update({
+            where : {
+                id : id
+            },
+            data : {
+                email : body.email || user.email,
+                firstName : body.firstName || user.firstName,
+                lastName : body.lastName || user.lastName,
+                phone : body.phone || user.phone,
+                profileImage : body.profileImage || user.profileImage,// shous be  included in the token
+            }
+        });
+        return NextResponse.json(
+            {
+                message : "User updated successfully",
+            },
+            { 
+                status : 200 
+            }
+        );
+
     }else{
         //user is trying to update someone else's account check if they have the privilege
+        const havePrivilege = await isPrivileged(request,"users:edit");
+
+        if(!havePrivilege){
+            return NextResponse.json(
+                {
+                    message : "You do not have the privilege to edit other users",
+                },
+                { 
+                    status : 403 
+                }
+            );
+        }
+        const user =await prisma.user.findUnique({
+            where : {
+                id : id || "00000" 
+
+            }
+        });
+
+        if (user == null) {
+            return NextResponse.json(
+                {
+                    message : "User not found",
+                },
+                { 
+                    status : 404 
+                }
+            );
+        }
+
+        await prisma.user.update({
+            where : {
+                id : id || "00000"
+            },
+            data : {
+                email : body.email || user.email,
+                firstName : body.firstName || user.firstName,
+                lastName : body.lastName || user.lastName,
+                phone : body.phone || user.phone,
+                profileImage : body.profileImage || user.profileImage,
+                role : body.role || user.role,
+                status : body.status || user.status,
+                privileges : body.privileges || user.privileges,
+            }
+        });
+        return NextResponse.json(
+            {
+                message : "User updated successfully",
+            },
+            { 
+                status : 200 
+            }
+        );
     }    
 }
