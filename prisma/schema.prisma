@@ -25,6 +25,47 @@ model User {
   createdAt DateTime @default(now())
   lastLogin DateTime?
   privileges String[] @default([]) //["users:add","users:edit","users:read"]
-  profileImage String? @default("/images/default-profile.png")
-}// gender ,emailVerified, phoneVerified, 
+  profileImage String @default("/images/default-profile.png")
+}// gender ,emailVerified, phoneVerified,
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  DELETED
+  
+}
+
+
+model Product{
+  id String @id @default(uuid())
+  sku String @unique
+  name String
+  lltNames String[] @default([])
+  description String
+  stock Int @default(0)
+  // status String @default("ACTIVE")//Active, Inactive, Deleted
+  status String @default("ACTIVE")
+  price Float
+  compareAt Float?
+  brand String?
+  model String?
+  media Media[]
+
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+}
+
+
+model Media{
+  id String @id @default(uuid())
+  url String
+  type MediaType
+  productIdentification String
+  product Product @relation(fields: [productIdentification], references: [id])
+}
 
